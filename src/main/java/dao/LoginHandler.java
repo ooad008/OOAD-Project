@@ -72,6 +72,23 @@ throw e;
 }
 }
 
+public int addItem(Connection conn,String category, String title, String price, String discription, String address, String city,
+		String pincode, String emailid, String mobileno) {
+	// TODO Auto-generated method stub
+	
+	Statement stmt = null;
+	try {
+		stmt = (Statement) conn.createStatement(); 
+	    String sql = "INSERT INTO `item`( item_category, item_title,item_price , item_discreption,seller_address, seller_city,seller_pincode, seller_emailid,seller_mobile,item_image1,item_image2,item_image3) VALUE ('"+category+"','"+title+"','"+price+"','"+discription+"','"+address+"','"+ city+"','"+pincode+"','"+emailid+"','"+mobileno+"','"+null+"','"+null+"','"+null+"')";
+	 System.out.println(sql);
+	    int rows =stmt.executeUpdate(sql);
+	    return rows;
+	}catch (Exception e) {
+		//throw e;
+	}
+	
+	return 0;
+}
 
  
 }
