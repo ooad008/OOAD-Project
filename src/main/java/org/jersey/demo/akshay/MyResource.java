@@ -289,7 +289,94 @@ SecurityManager securityManager= new SecurityManager();
 
 }
 
-   
+      
+@POST
+@Path("/addItem")
+@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+public void addItem(@FormParam("category") String category,@FormParam("title") String title,@FormParam("price") String price,@FormParam("discription") String discription,@FormParam("address") String address,@FormParam("city") String city,@FormParam("pincode") String pincode,@FormParam("emailid") String emailid,@FormParam("mobileno") String mobileno) throws Exception {
+	System.out.println("Hello");
+//public void addUser(@PathParam("username") String username,@PathParam("mobnumber") String mobnumber,@PathParam("emailid") String emailid,@PathParam("password") String password) throws Exception {
+SecurityManager mg=new SecurityManager();
+	emailID=emailid;
+	System.out.println(category + title + price +discription+address+city+pincode+emailid+mobileno);
+	boolean flag=mg.addItem(category,title,price,discription,address,city,pincode,emailid,mobileno);
+//	if(!flag)
+		//return "Username is not valid";
+//	else
+	//return "User Added: "+username;
+}
+	
+// upload image for seller part 	
+@POST
+@Path("/uploadfile2") 
+@Consumes(MediaType.MULTIPART_FORM_DATA)
+public Viewable uploadfile2(
+        @FormDataParam("uploadFile1") InputStream fileInputStream1,
+        @FormDataParam("uploadFile1") FormDataContentDisposition fileDetail1,@FormDataParam("uploadFile2") InputStream fileInputStream2,
+        @FormDataParam("uploadFile2") FormDataContentDisposition fileDetail2,@FormDataParam("uploadFile3") InputStream fileInputStream3,
+        @FormDataParam("uploadFile3") FormDataContentDisposition fileDetail3) throws Exception {
+	
+	System.out.print("Image Data");
+	String outputt=null;
+	String fileName1 = null,fileName2 = null,fileName3 = null;
+    String uploadFilePath1 = null,uploadFilePath2 = null,uploadFilePath3 = null;
+    SecurityManager sm = null;
+	try {
+        fileName1 = fileDetail1.getFileName();
+        fileName2 = fileDetail2.getFileName();
+        fileName3 = fileDetail3.getFileName();
+        System.out.println(fileName1);
+        System.out.println(fileName2);
+        System.out.println(fileName3);
+        uploadFilePath1 = writeToFileServer2(fileInputStream1, fileName1);
+        uploadFilePath2 = writeToFileServer2(fileInputStream2, fileName2);
+        uploadFilePath3 = writeToFileServer2(fileInputStream3, fileName3);
+        System.out.println(uploadFilePath1);
+        System.out.println(uploadFilePath2);
+        System.out.println(uploadFilePath3);
+        sm =new SecurityManager();
+        outputt = sm.uploadFile1(uploadFilePath1,fileName1,uploadFilePath2,fileName2,uploadFilePath3,fileName3,emailID);
+      
+    }
+    catch(IOException ioe){
+        ioe.printStackTrace();
+    }
+    finally{
+        // release resources, if any
+    }
+	
+	 return new Viewable("/amazonhomepage.jsp", sm.displayItem(emailID));
+	//return fileName+outputt;
+}
+
+private String writeToFileServer2(InputStream inputStream, String fileName) throws IOException {
+ 
+OutputStream outputStream = null;
+String qualifiedUploadFilePath = UPLOAD_FILE_SERVER + fileName;
+
+System.out.println(qualifiedUploadFilePath);
+
+try {
+    outputStream = new FileOutputStream(new File(qualifiedUploadFilePath));
+    int read = 0;
+    byte[] bytes = new byte[1024];
+    while ((read = inputStream.read(bytes)) != -1) {
+        outputStream.write(bytes, 0, read);
+    }
+    outputStream.flush();
+}
+catch (IOException ioe) {
+    ioe.printStackTrace();
+}
+finally{
+    //release resource, if any
+    outputStream.close();
+}
+return qualifiedUploadFilePath;
+}
+
+
+
 
 
 }
