@@ -213,6 +213,127 @@ public Map<String, Object> displayHome() throws Exception{
 
 
 
+// Add Item into database (seller part)
+public boolean addItem(String category, String title, String price, String discription, String address, String city,
+		String pincode, String emailid, String mobileno) {
+	// TODO Auto-generated method stub
+	
+	try {
+		DbConnection database= new DbConnection();
+		Connection connection = database.getConnection();
+		LoginHandler loginHandler= new LoginHandler();
+		int rows=loginHandler.addItem(connection,category,title,price,discription,address,city,pincode,emailid,mobileno);
+       System.out.println(rows);
+		 if(rows==0)
+				return false;
+
+		} catch (Exception e) {
+		//throw e;
+		}
+	
+	
+	return true;
+}
+
+
+
+// Display item from database (Display on Home Page)
+public Map<String, String> displayItem(String emailID) throws Exception{
+	UserVO a = new UserVO();
+	 ArrayList<String> list=new ArrayList<String>();
+	 HashMap<String, String> hmap = new HashMap<String, String>();
+	DbConnection database= new DbConnection();
+	Connection conn = database.getConnection();
+	  System.out.println("Creating statement...");
+	  Statement stmt = null;
+	  String path="";
+      stmt = conn.createStatement();
+      String sql;
+     sql = "SELECT * FROM item where seller_emailid = " + "'"+ emailID + "'"+";";
+     
+     // sql="SELECT * FROM amazon";
+      System.out.println(sql);
+      ResultSet rs = stmt.executeQuery(sql);
+      Map<String, String> map = new HashMap<String, String>();
+      Map<String, Object> p = new HashMap<String, Object>();
+      //STEP 5: Extract data from result set
+      List<String> l = new ArrayList<String>();
+      List<String> l1 = new ArrayList<String>();
+      while(rs.next())
+		{
+    	  
+    	    String a1=rs.getString("item_title");
+    	    String b=rs.getString("item_price");
+    	    String c=rs.getString("item_image1");
+    	    String d=rs.getString("item_image2");
+    	    String e=rs.getString("item_image3");
+          String a4="item_title1";
+    	    String a2="item_title2";
+          String a3="item_title3";
+    	     System.out.println("Hello");
+    	     System.out.println(a1);
+    	     System.out.println(b);
+    	     System.out.println(c);
+    	     System.out.println(d);
+    	     System.out.println(e);
+    	     map.put("key1", c);
+    	     map.put("key2", d);
+    	     map.put("key3", e);
+			//p.put("share", map);
+			
+		}
+	
+       //  System.out.print(" picpath : " + path);
+       
+    //  hmap.put("username","exit");
+      //STEP 6: Clean-up environment
+      rs.close();
+      stmt.close();
+     // return a;
+  	return map;
+}
+
+// upload image part(seller)
+public String uploadFile1(String filepath1, String fileName1,String filepath2, String fileName2,String filepath3, String fileName3, String emailID) throws Exception {
+	// TODO Auto-generated method stub
+	DbConnection database= new DbConnection();
+	Connection conn = database.getConnection();
+	String reply=null; 
+	String querySetLimit = "SET GLOBAL max_allowed_packet=104857600;";  // 10 MB
+     Statement stSetLimit = conn.createStatement();
+     stSetLimit.execute(querySetLimit);
+     String way="http://127.0.0.1:8887/upload/";
+     String gdd1 = filepath1.substring(filepath1.lastIndexOf('/')+1);
+     String gdd2 = filepath2.substring(filepath2.lastIndexOf('/')+1);
+     String gdd3 = filepath3.substring(filepath3.lastIndexOf('/')+1);
+     String combine1 =way+gdd1;
+     String combine2 =way+gdd2;
+     String combine3 =way+gdd3;
+     String sql = "UPDATE item SET item_image1 =" +"'"+ combine1 + "'"+ "," + "item_image2 =" +"'"+ combine2 + "'"+ "," + "item_image3 =" +"'"+ combine3 + "'"+ " WHERE seller_emailid = " + "'"+emailID +"'"+";";
+     System.out.println(sql);
+     PreparedStatement statement = conn.prepareStatement(sql);
+    // statement.setString(1,"virat");
+    // statement.setString(1, fileName.toString());
+     //InputStream inputStream = new FileInputStream(new File(filepath));
+
+    // statement.setString(2, filepath);
+
+     int row = statement.executeUpdate();
+     if (row > 0) {
+         reply = "A contact was inserted with photo image.";
+        return reply;
+     }
+     conn.close();
+     //inputStream.close();
+	return reply;
+}
+
+
+
+
+
+
+
 
 
 }
